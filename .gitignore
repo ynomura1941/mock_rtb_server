@@ -4,3 +4,7 @@ priv
 *.o
 *.beam
 *.plt
+db/*
+ebin
+logs/*
+*.dump
