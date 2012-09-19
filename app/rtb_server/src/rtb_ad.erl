@@ -11,10 +11,10 @@ setup(Nodes) ->
   ?LOG(Nodes),
   ok = mnesia:create_schema(Nodes),
   application:start(mnesia),
-  ?LOG(mnesia:create_table(rtb_ad, [
+  mnesia:create_table(rtb_ad, [
     {attributes,record_info(fields,rtb_ad)},
     {disc_copies, Nodes}
-    ])),
+    ]),
   application:stop(mnesia),
   ok.
 
