@@ -2,7 +2,7 @@ all: deps debug_compile
 
 setup:
 	rm -Rf db/*
-	erl -sname rtb_server -mnesia dir '"db"' -noinput -pa app/rtb_server/ebin/ -eval 'rtb_ad:setup([node()])' -s init stop
+	erl -sname rtb_server -mnesia dir '"db"' -noinput -pa app/mock_rtb_server/ebin/ -eval 'rtb_ad:setup([node()])' -s init stop
 
 deps:
 	./rebar get-deps
