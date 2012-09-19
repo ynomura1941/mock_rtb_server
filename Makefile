@@ -1,8 +1,9 @@
 all: deps debug_compile
 
-setup: compile
-	rm -Rf db/*
+debug_setup: debug_compile
 	erl -sname rtb_server -mnesia dir '"db"' -noinput -pa app/rtb_server/ebin/ -eval 'rtb_ad:setup([node()])' -s init stop
+	mkdir logs
+	mkdir public_html
 
 deps:
 	./rebar get-deps
