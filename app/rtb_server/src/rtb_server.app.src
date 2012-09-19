@@ -1,0 +1,12 @@
+{application, rtb_server,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { rtb_server_app, []}},
+  {env, []}
+ ]}.

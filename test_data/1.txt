@@ -1,0 +1,14 @@
+1
+adingo.jp
+M
+100.0
+20,30
+IAB1
+IAB1,IAB5
+320x50
+2012-01-01 00:00:00
+2012-12-31 23:59:59
+2
+<a href="http://fluct.jp/" target="_blank">
+  <img src="http://fluct.jp/ja/img/common/logo.jpg" />
+</a>
