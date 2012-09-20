@@ -19,7 +19,7 @@ setup(Nodes) ->
   ok.
 
 start() ->
-  ?LOG(mnesia:wait_for_tables([rtb_ad],5000)),
+  mnesia:wait_for_tables([rtb_ad],5000),
   ok.
 
 find_by_adid(Adid) ->
@@ -67,20 +67,16 @@ add_rtb_ad(Adid,Price,Contents,Domain,Height,Width,Gender,Generation,
 search(Cond) ->
   ?LOG(Cond),
   {Current, Imp, User} = Cond,
-  {IId, CW, CH, CBattr}= Imp,
-  BattrBits = utils:categories_to_bits(CBattr),
+  {IId, CW, CH, CBattrBits}= Imp,
 
-  {Year,Gender} = User,
-  YearBits = utils:year_to_generation(Year),
-  GenderBits = utils:gender_to_bits(Gender),
-  ?LOG([BattrBits, YearBits, GenderBits]),
+  {YearBits,GenderBits} = User,
   F = fun() ->
     Q1 = qlc:q([ Rec || Rec <- mnesia:table(rtb_ad),
       Rec#rtb_ad.h =:= CH,
       Rec#rtb_ad.w =:= CW,
       Rec#rtb_ad.generations band YearBits > 0,
       Rec#rtb_ad.gender band GenderBits > 0,
-      Rec#rtb_ad.self_categories band BattrBits =:= 0,
+      Rec#rtb_ad.self_categories band CBattrBits =:= 0,
       Rec#rtb_ad.start_datetime =< Current,
       Rec#rtb_ad.end_datetime >= Current]),
     Q2 = qlc:sort(Q1, {order, fun(Ad1,Ad2) -> Ad1#rtb_ad.price > Ad2#rtb_ad.price end}),
@@ -93,3 +89,4 @@ search(Cond) ->
             self_categories=Sc, target_categories=Tc, ad_type=At, start_datetime=Sd, end_datetime=Ed} <- R]
   end,
   mnesia:activity(transaction,F).
+

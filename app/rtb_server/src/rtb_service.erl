@@ -50,13 +50,20 @@ fetch_ad([], _Opts) -> [];
 fetch_ad([H|T], Opts) ->
   ad_search(H, Opts) ++ fetch_ad(T, Opts).
 
-ad_search(Imp, {Site, App, User, Device, Restrict}) ->
+ad_search(Imp, {_Site, _App, User, _Device, _Restrict}) ->
   Current = calendar:local_time(),
-  ConvImp = {proplists:get_value(<<"impid">>,Imp), proplists:get_value(<<"w">>,Imp), 
-              proplists:get_value(<<"h">>,Imp), proplists:get_value(<<"battr">>,Imp)},
-  ConvUser = {proplists:get_value(<<"yob">>,User, 0), proplists:get_value(<<"gender">>,User, "O")},
+  ConvImp = imp_keys(Imp),
+  ConvUser = user_keys(User),
 
   case rtb_ad:search({Current, ConvImp,ConvUser}) of
     Results -> convert_ads(Results)
   end.
   
+imp_keys(Imp) ->
+  Battr = proplists:get_value(<<"battr">>,Imp, []),
+  {proplists:get_value(<<"impid">>,Imp), proplists:get_value(<<"w">>,Imp),
+    proplists:get_value(<<"h">>,Imp), utils:categories_to_bits(Battr)}.
+user_keys(User) ->
+  Yob = proplists:get_value(<<"yob">>,User, 0),
+  Gender = proplists:get_value(<<"gender">>,User, "O"),
+  {utils:year_to_generation(Yob), utils:gender_to_bits(Gender)}.

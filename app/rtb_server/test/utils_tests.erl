@@ -1,4 +1,4 @@
--module(utils_test).
+-module(utils_tests).
 -include_lib("eunit/include/eunit.hrl").
 
 gender_to_bits_other_test() -> 3 = utils:gender_to_bits("A").

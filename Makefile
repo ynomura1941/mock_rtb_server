@@ -1,4 +1,4 @@
-all: deps debug_compile
+all: deps compile
 
 debug_setup: compile
 	erl -sname rtb_server -mnesia dir '"db"' -noinput -pa app/rtb_server/ebin/ -eval 'rtb_ad:setup([node()])' -s init stop
@@ -32,5 +32,9 @@ update:
 	./rebar update-deps
 
 start: all
+	deps/yaws/bin/yaws -i -sname rtb_server -c etc/yaws.conf
+
+
+debug_start: 
 	deps/yaws/bin/yaws -i -sname rtb_server -c etc/yaws.conf
 
