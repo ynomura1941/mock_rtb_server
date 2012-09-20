@@ -9,3 +9,5 @@ mock_rtb_server
 3. eshell上でテストデータをインポート
 
      > rtb_ad:insert_from_file("test_data/1.txt")
+
+4. DEV HTTP CLIENTやcurlでJSONをPOST
