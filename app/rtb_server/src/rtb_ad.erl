@@ -84,9 +84,9 @@ search(Cond) ->
       Rec#rtb_ad.start_datetime =< Current,
       Rec#rtb_ad.end_datetime >= Current]),
     Q2 = qlc:sort(Q1, {order, fun(Ad1,Ad2) -> Ad1#rtb_ad.price > Ad2#rtb_ad.price end}),
-    C = qlc:cursor(Q2),
-    R = qlc:next_answers(C,1),
-    qlc:delete_cursor(C),
+    CR = qlc:cursor(Q2),
+    R = qlc:next_answers(CR,1),
+    qlc:delete_cursor(CR),
     ?LOG(R),
     [{IId, Adid, P, C, D, H, W, Gen, G, Sc, Tc, At, Sd, Ed} || 
       #rtb_ad{adid=Adid, price=P, contents=C, domain=D, h=H, w=W, gender=Gen, generations=G,
