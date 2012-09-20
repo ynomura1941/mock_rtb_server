@@ -1,7 +1,7 @@
 -module(rtb_service).
 -include("../include/common.hrl").
 
--export([execute/1]).
+-export([execute/1, rest_keys/1]).
 
 execute(RowData) ->
   {struct,JsonData} = mochijson2:decode(RowData),
@@ -50,12 +50,13 @@ fetch_ad([], _Opts) -> [];
 fetch_ad([H|T], Opts) ->
   ad_search(H, Opts) ++ fetch_ad(T, Opts).
 
-ad_search(Imp, {_Site, _App, User, _Device, _Restrict}) ->
+ad_search(Imp, {_Site, _App, User, _Device, Restrict}) ->
   Current = calendar:local_time(),
   ConvImp = imp_keys(Imp),
   ConvUser = user_keys(User),
+  ConvRest = rest_keys(Restrict),
 
-  case rtb_ad:search({Current, ConvImp,ConvUser}) of
+  case rtb_ad:search({Current, ConvImp,ConvUser,ConvRest}) of
     Results -> convert_ads(Results)
   end.
   
@@ -67,3 +68,13 @@ user_keys(User) ->
   Yob = proplists:get_value(<<"yob">>,User, 0),
   Gender = proplists:get_value(<<"gender">>,User, "O"),
   {utils:year_to_generation(Yob), utils:gender_to_bits(Gender)}.
+
+rest_keys(Restrict) ->
+  BCatJson   = proplists:get_value(<<"bcat">>,Restrict, []),
+  BAdvJson   = proplists:get_value(<<"badv">>,Restrict, []),
+  BAdvidJson = proplists:get_value(<<"badvid">>,Restrict, []),
+
+  BCats  = lists:map(fun({struct,Cat}) -> proplists:get_value(<<"iab">>,Cat) end, BCatJson),
+  BAdvs   = lists:map(fun({struct,Adv}) -> proplists:get_value(<<"domain">>,Adv) end, BAdvJson),
+  BAdvids = lists:map(fun({struct,Advid}) -> proplists:get_value(<<"id">>,Advid) end, BAdvidJson),
+  {utils:categories_to_bits(BCats),BAdvs, BAdvids}.

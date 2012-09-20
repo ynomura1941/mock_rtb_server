@@ -66,10 +66,10 @@ add_rtb_ad(Adid,Price,Contents,Domain,Height,Width,Gender,Generation,
 
 search(Cond) ->
   ?LOG(Cond),
-  {Current, Imp, User} = Cond,
-  {IId, CW, CH, CBattrBits}= Imp,
-
-  {YearBits,GenderBits} = User,
+  {Current, Imp, User, Rest} = Cond,
+  {IId, CW, CH, CBattrBits} = Imp,
+  {YearBits,GenderBits}     = User,
+  {BCats,BAdvs,_BAvid}      = Rest,
   F = fun() ->
     Q1 = qlc:q([ Rec || Rec <- mnesia:table(rtb_ad),
       Rec#rtb_ad.h =:= CH,
@@ -77,6 +77,8 @@ search(Cond) ->
       Rec#rtb_ad.generations band YearBits > 0,
       Rec#rtb_ad.gender band GenderBits > 0,
       Rec#rtb_ad.self_categories band CBattrBits =:= 0,
+      Rec#rtb_ad.self_categories band BCats =:= 0,
+      not(lists:member(Rec#rtb_ad.domain, BAdvs)),
       Rec#rtb_ad.start_datetime =< Current,
       Rec#rtb_ad.end_datetime >= Current]),
     Q2 = qlc:sort(Q1, {order, fun(Ad1,Ad2) -> Ad1#rtb_ad.price > Ad2#rtb_ad.price end}),
