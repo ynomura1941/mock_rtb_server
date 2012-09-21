@@ -6,8 +6,8 @@ mock_rtb_server
 
 1. make debug_setup
 2. make start
-3. eshell上でテストデータをインポート
+3. eshell上でテストデータを生成
 
-     > rtb_ad:insert_from_file("test_data/1.txt")
+     > rtb_ad:test_data(1,10000).
 
 4. DEV HTTP CLIENTやcurlでJSONをPOST
